@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>F1 2020 Telemetry</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/weather-icons.min.css">
+    <link rel="stylesheet" href="css/flag-icon.min.css">
+    <link rel="stylesheet" href="css/telemetry.css">
+</head>
+
+<body>
+    <div id=telemetry>
+        <!-- <ul class="nav justify-content-center nav-pills">
+        <li class="nav-item">
+            <a class="nav-link active" href="#">Session</a>
+        </li>
+    </ul> -->
+        <div id="overlay">
+            <div class="container">
+                <div class="row">
+                    <div id="result">
+                        <button type="button" class="btn btn-danger" style="float: right; margin-bottom:5px;" onclick="hideOverlay()">×</button>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Pos</th>
+                                    <th>Grid</th>
+                                    <th>
+                                        <!-- Grid/Pos change -->
+                                    </th>
+                                    <th>
+                                        <!-- Nationality -->
+                                    </th>
+                                    <th>Driver</th>
+                                    <th>
+                                        <!-- Team Color -->
+                                    </th>
+                                    <th>Team</th>
+                                    <th>Points</th>
+                                    <th>Race time</th>
+                                    <th>
+                                        <!-- Race time diff -->
+                                    </th>
+                                    <th>Best Lap</th>
+                                    <th>Laps</th>
+                                    <th>Pits</th>
+                                    <th>Stints</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="driver in Result.RaceResultData">
+                                    <td>{{ driver.ResultStatus == 4 || driver.ResultStatus == 6 || driver.ResultStatus == 7 ? 'DNF' : driver.Position }}</td>
+                                    <td>{{ driver.GridPosition }}</td>
+                                    <td :style="GridPosDiffStyle(driver.Position, driver.GridPosition)">{{ GridPosDiff(driver.Position, driver.GridPosition) }}</td>
+                                    <td><span :class="Flag(driver.Nation)"></span></td>
+                                    <td>{{ driver.Name }}</td>
+                                    <td :style="TeamColorStyle(driver.TeamColor)"></td>
+                                    <td>{{ driver.Team }}</td>
+                                    <td>{{ driver.Points }}</td>
+                                    <td>{{ LapTimeFormatted(driver.TotalRaceTime) }}</td>
+                                    <td>{{ driver.TotalTimeDiff == null ? "" : '+' + LapTimeFormatted(driver.TotalTimeDiff) }}</td>
+                                    <td>{{ LapTimeFormatted(driver.BestLapTime) }}</td>
+                                    <td>{{ driver.NumLaps }}</td>
+                                    <td>{{ driver.NumTyreStints }}</td>
+                                    <td><img v-for="tyre in driver.Tyres" :src="TyreCompoundImg(tyre)"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container" id="container">
+            <div class="row">
+                <div id="session">
+                    <h2><span :class="CountryString"></span> {{ Session.Track }} <i :class="WeatherString"></i> {{ Session.AirTemperature }}°C (Air) {{ Session.TrackTemperature }}°C (Track) - {{ Session.TrackLength }} m</h2>
+                    <h3 v-if="Session.SessionType == 'R' || Session.SessionType == 'R2'">Race - {{ Session.LapsDone }}/{{ Session.TotalLaps }} laps - time: {{ SessionDurationFormatted }} - position: {{ Session.Position }}/{{ Session.TotalCars }}</h3>
+                    <h3 v-else>{{ Session.SessionType }} - {{ Session.LapsDone }} {{ Session.LapsDone == 1 ? 'lap' : 'laps' }} done - time left: {{ SessionTimeLeftFormatted }} - position: {{ Session.Position }}/{{ Session.TotalCars }}</h3>
+                    <table class="weather">
+                        <tbody>
+                            <tr>
+                                <td v-for="weather in Session.WeatherForecasts"><i :class="Weather(weather.Weather)"></i>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td v-for="weather in Session.WeatherForecasts">{{ weather.SessionType }}</td>
+                            </tr>
+                            <tr>
+                                <td v-for="weather in Session.WeatherForecasts">+{{ weather.TimeOffset }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-3" id="status">
+                    <h5>Damage:</h5>
+                    Engine: {{ Status.EngineDamage }}%</br>
+                    Front Wing: {{ Status.FrontLeftWingDamage }}% (left) {{ Status.FrontRightWingDamage }}% (right)</br>
+                    Gearbox: {{ Status.GearBoxDamage }}%</br>
+                    Rear Wing: {{ Status.RearWingDamage }}%</br>
+                    </br>
+                    <h5>Temperature: </h5>
+                    Brakes: {{ BrakesTemperatureAll }}</br>
+                    Engine: {{ Status.EngineTemperature }}°C</br>
+                    Tyres Inner: {{ TyresInnerTemperatureAll }}</br>
+                    Tyres Surface: {{ TyresSurfaceTemperatureAll }}</br>
+                    (RL, RR, FL, FR)</br>
+                    </br>
+                    <h5>Misc:</h5>
+                    Tyre Wear:
+                    <div class="container">
+                        <div class="row justify-content-around tyre-row">
+                            <div v-bind:style="TyreColor(2)" class="col-3 tyre-wear">{{ Status.TyresWear[2] }}%</div>
+                            <div v-bind:style="TyreColor(3)" class="col-3 tyre-wear">{{ Status.TyresWear[3] }}%</div>
+                        </div>
+                        <div class="row justify-content-around tyre-row">
+                            <div v-bind:style="TyreColor(0)" class="col-3 tyre-wear">{{ Status.TyresWear[0] }}%</div>
+                            <div v-bind:style="TyreColor(1)" class="col-3 tyre-wear">{{ Status.TyresWear[1] }}%</div>
+                        </div>
+                    </div>
+                    </br>
+                    Fuel: {{ RemainingLaps }} laps {{ FuelMixText }} </br>
+                    ERS Mode: {{ Status.ERSMode }}
+                    <div class="progress">
+                        <div v-bind:class="BarColor" role="progressbar" v-bind:aria-valuenow="ERSCharge" aria-valuemin="0" aria-valuemax="100" v-bind:style="BarWidth">
+                            {{ ERSCharge }}% ERS
+                        </div>
+                    </div>
+                </div>
+                <div class="col-9" id="ranking">
+                    <table v-if="Session.SessionType == 'R' || Session.SessionType == 'R2'" class='raceTable'>
+                        <thead>
+                            <th>
+                                <!-- Pit Status -->
+                            </th>
+                            <th>Pos</th>
+                            <th>
+                                <!-- Nationality -->
+                            </th>
+                            <th>Driver</th>
+                            <th>
+                                <!-- Tyre Compound -->
+                            </th>
+                            <th>
+                                <!-- Tyre Age -->
+                            </th>
+                            <th>
+                                <!-- Team Color -->
+                            </th>
+                            <th>Team</th>
+                            <th>
+                                <!-- Best Lap Tyre -->
+                            </th>
+                            <th>Best Lap</th>
+                            <th>
+                                <!-- Best Lap Num -->
+                            </th>
+                            <th>Penalties</th>
+                            <th>Lap</th>
+                            <th>Dist</th>
+                        </thead>
+                        <tbody>
+                            <tr v-for="driver in Ranking.RankingData" :style="RowBackground(driver.IsPlayer, driver.AI)">
+                                <td style="text-align: center;">{{ driver.LapData.PitStatus == 0 || driver.LapData.ResultStatus == 6 || driver.LapData.ResultStatus == 7 ? '' : '⛽' }}</td>
+                                <td>{{ driver.LapData.ResultStatus == 6 || driver.LapData.ResultStatus == 7 ? 'DNF' : driver.LapData.CarPosition }}</td>
+                                <td><span :class="Flag(driver.Nation)"></span></td>
+                                <td>{{ driver.Name }}</td>
+                                <td><img :src="TyreCompoundImg(driver.Tyres)"></td>
+                                <td>{{ driver.TyreAge}}l</td>
+                                <td :style="TeamColorStyle(driver.TeamColor)"></td>
+                                <td>{{ driver.Team }}</td>
+                                <td></td>
+                                <td>{{ LapTimeFormatted(driver.LapData.BestLapTime) }}</td>
+                                <td>(Lap {{ driver.LapData.BestLapNum }})
+                                </td>
+                                <td>+{{ driver.LapData.Penalties }}s</td>
+                                <td>{{ driver.LapData.CurrentLapNum }}</td>
+                                <td>{{ driver.LapData.DistDiff > 0 ? '+' + driver.LapData.DistDiff + 'km' : "" }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table v-else class='trainingTable'>
+                        <thead>
+                            <th>
+                                <!-- Driver Status -->
+                            </th>
+                            <th>Pos</th>
+                            <th>
+                                <!-- Nationality -->
+                            </th>
+                            <th>Driver</th>
+                            <th>
+                                <!-- Tyre Compound -->
+                            </th>
+                            <th>
+                                <!-- Tyre Age -->
+                            </th>
+                            <th>
+                                <!-- Team Color -->
+                            </th>
+                            <th>Team</th>
+                            <th>
+                                <!-- Best Lap Tyre -->
+                            </th>
+                            <th>Best Lap</th>
+                            <th>
+                                <!-- Diff -->
+                            </th>
+                            <th>S1</th>
+                            <th>S2</th>
+                            <th>S3</th>
+                            <th>Laps</th>
+                        </thead>
+                        <tbody>
+                            <tr v-for="driver in Ranking.RankingData" :style="RowBackground(driver.IsPlayer, driver.AI)">
+                                <td :style="DriverStatusStyle(driver.LapData.DriverStatus)">
+                                    {{ DriverStatusIcon(driver.LapData.DriverStatus) }}</td>
+                                <td>{{ driver.LapData.CarPosition }}</td>
+                                <td><span :class="Flag(driver.Nation)"></span></td>
+                                <td>{{ driver.Name }}</td>
+                                <td><img :src="TyreCompoundImg(driver.Tyres)"></td>
+                                <td>{{ driver.TyreAge}}l</td>
+                                <td :style="TeamColorStyle(driver.TeamColor)"></td>
+                                <td>{{ driver.Team }}</td>
+                                <td></td>
+                                <td>{{ LapTimeFormatted(driver.LapData.BestLapTime) }}</td>
+                                <td>{{ driver.LapData.Diff == null ? "" : '+' + SectorTimeFormatted(driver.LapData.Diff) }}
+                                </td>
+                                <td>{{ SectorTimeFormatted(driver.LapData.BestLapSector1TimeInMS) }}</td>
+                                <td>{{ SectorTimeFormatted(driver.LapData.BestLapSector2TimeInMS) }}</td>
+                                <td>{{ SectorTimeFormatted(driver.LapData.BestLapSector3TimeInMS) }}</td>
+                                <td>{{ driver.LapData.CurrentLapNum > 0 ? driver.LapData.CurrentLapNum - 1 : driver.LapData.CurrentLapNum }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="js/moment.js"></script>
+    <script src="js/vue.js"></script>
+    <script src="js/util.js"></script>
+    <script src="js/telemetry.js"></script>
+    <script type="text/javascript">
+        (function() {
+            var conn = new WebSocket("ws://localhost:8080/ws");
+            conn.onclose = function(evt) {
+                data.textContent = 'Connection closed';
+            }
+            conn.onmessage = function(evt) {
+                try {
+                    data = JSON.parse(evt.data);
+                } catch (err) {
+                    console.log("too much data!"); // happens when 2 messages are sent together
+                    return
+                }
+
+                //console.log(data);
+                switch (data.MessageType) {
+                    case "SessionInfo":
+                        telemetry.Session = data;
+                        break;
+                    case "RankingInfo":
+                        data.RankingData = data.RankingData.slice(0, data.NumCars)
+                        for (i = 1; i < data.NumCars; i++) {
+                            if (data.RankingData[i].LapData.BestLapTime == 0 && data.SessionType != 'R') {
+                                continue
+                            }
+                            data.RankingData[i].LapData.Diff = (data.RankingData[i].LapData.BestLapTime - data.RankingData[i - 1].LapData.BestLapTime) * 1000
+                            data.RankingData[i].LapData.DistDiff = (Math.round(data.RankingData[i - 1].LapData.TotalDistance - data.RankingData[i].LapData.TotalDistance) / 1000).toFixed(3)
+                        }
+                        telemetry.Ranking = data;
+                        break;
+                    case "CarStatusInfo":
+                        telemetry.Status = data;
+                        break;
+                    case "RaceResult":
+                        data.RaceResultData = data.RaceResultData.slice(0, data.NumCars)
+                        for (i = 0; i < data.NumCars; i++) {
+                            data.RaceResultData[i].Tyres = data.RaceResultData[i].Tyres.slice(0, data.RaceResultData[i].NumTyreStints)
+                            if (i == 0) {
+                                continue
+                            }
+                            if (data.RaceResultData[i].ResultStatus == 3) {
+                                data.RaceResultData[i].TotalTimeDiff = data.RaceResultData[i].TotalRaceTime - data.RaceResultData[i - 1].TotalRaceTime
+                            }
+                        }
+                        telemetry.Result = data;
+                        document.getElementById("overlay").style.display = "block";
+                        break;
+                    default:
+                        break;
+                }
+            }
+        })();
+    </script>
+</body>
+
+</html>

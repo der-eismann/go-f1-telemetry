@@ -1,0 +1,99 @@
+#container {
+    padding-top: 40px;
+    max-width: 1650px;
+}
+
+body {
+    background-color: #212121;
+    color: #bebebe;
+}
+
+#session {
+    width: 100%;
+    text-align: center;
+}
+
+table.weather {
+    margin-left: auto;
+    margin-right: auto;
+    width: auto;
+    margin-bottom: 10px;
+}
+
+table.weather>tbody>tr {
+    background: none;
+}
+
+table.weather>tbody>tr>td {
+    border-right: 1px solid #aaaaaa;
+}
+
+#overlay {
+    position: fixed;
+    /* Sit on top of the page content */
+    display: none;
+    /* Hidden by default */
+    width: 100%;
+    /* Full width (cover the whole page) */
+    height: 100%;
+    /* Full height (cover the whole page) */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Black background with opacity */
+    z-index: 2;
+    /* Specify a stack order in case you're using a different order for other elements */
+}
+
+#result {
+    position: absolute;
+    top: 50%;
+    left: 25%;
+    color: white;
+    transform: translate(-0%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    background: #4f4e4e;
+    padding: 25px;
+    border-radius: 5px;
+}
+
+#map {
+    border: 1px solid #d3d3d3;
+    width: 25%;
+    background: url("../tracks/melbourne.png");
+    background-size: 100%;
+}
+
+ul {
+    padding-top: 10px;
+}
+
+table {
+    width: 100%;
+}
+
+tr:nth-child(even) {
+    background: #363535
+}
+
+tr:nth-child(odd) {
+    background: #4f4e4e
+}
+
+.tyre-row {
+    height: 65px;
+}
+
+.tyre-wear {
+    border: 2px solid white;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+img {
+    width: 25px;
+    height: 25px;
+}
