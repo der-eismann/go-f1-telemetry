@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"sort"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/der-eismann/telemetry/pkg/util"
@@ -205,7 +206,12 @@ func (app *App) createRankingInfo() ([]byte, error) {
 		if rankingData[i].AI == 1 {
 			rankingData[i].Name = util.Drivers[app.Data.PacketParticipantsData.Participants[i].DriverID][0] + " " + util.Drivers[app.Data.PacketParticipantsData.Participants[i].DriverID][1]
 		} else if app.Data.PacketSessionData.NetworkGame == 0 {
-			rankingData[i].Name = string(bytes.Trim(app.Data.PacketParticipantsData.Participants[i].Name[:], "\x00"))
+			upperCaseName := bytes.Trim(app.Data.PacketParticipantsData.Participants[i].Name[:], "\x00")
+			if len(upperCaseName) > 0 {
+				rankingData[i].Name = string(upperCaseName[0]) + strings.ToLower(string(upperCaseName[1:]))
+		} else {
+				rankingData[i].Name = ""
+			}
 		} else {
 			rankingData[i].Name = "Player " + strconv.Itoa(int(app.Data.PacketParticipantsData.Participants[i].DriverID))
 		}
@@ -290,7 +296,12 @@ func (app *App) createRaceResult() ([]byte, error) {
 		if app.Data.PacketParticipantsData.Participants[i].AiControlled == 1 {
 			resultData[i].Name = util.Drivers[app.Data.PacketParticipantsData.Participants[i].DriverID][0] + " " + util.Drivers[app.Data.PacketParticipantsData.Participants[i].DriverID][1]
 		} else if app.Data.PacketSessionData.NetworkGame == 0 {
-			resultData[i].Name = string(bytes.Trim(app.Data.PacketParticipantsData.Participants[i].Name[:], "\x00"))
+			upperCaseName := bytes.Trim(app.Data.PacketParticipantsData.Participants[i].Name[:], "\x00")
+			if len(upperCaseName) > 0 {
+				resultData[i].Name = string(upperCaseName[0]) + strings.ToLower(string(upperCaseName[1:]))
+		} else {
+				resultData[i].Name = ""
+			}
 		} else {
 			resultData[i].Name = "Player " + strconv.Itoa(int(app.Data.PacketParticipantsData.Participants[i].DriverID))
 		}
