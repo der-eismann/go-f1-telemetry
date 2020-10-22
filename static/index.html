@@ -165,8 +165,8 @@
                         </thead>
                         <tbody>
                             <tr v-for="driver in Ranking.RankingData" :style="RowBackground(driver.IsPlayer, driver.AI)">
-                                <td style="text-align: center;">{{ driver.LapData.PitStatus == 0 || driver.LapData.ResultStatus == 6 || driver.LapData.ResultStatus == 7 ? '' : '⛽' }}</td>
-                                <td>{{ driver.LapData.ResultStatus == 6 || driver.LapData.ResultStatus == 7 ? 'DNF' : driver.LapData.CarPosition }}</td>
+                                <td style="text-align: center;">{{ driver.LapData.PitStatus == 0 || driver.LapData.ResultStatus == 4 || driver.LapData.ResultStatus == 6 || driver.LapData.ResultStatus == 7 ? '' : '⛽' }}</td>
+                                <td>{{ PositionOrResult(driver.LapData.ResultStatus, driver.LapData.CarPosition) }}</td>
                                 <td><span :class="Flag(driver.Nation)"></span></td>
                                 <td>{{ driver.Name }}</td>
                                 <td><img :src="TyreCompoundImg(driver.Tyres)"></td>

@@ -230,6 +230,15 @@ var telemetry = new Vue({
                     return ""
             }
         },
+        PositionOrResult(status, pos) {
+            if (status == 6 || status == 7) {
+                return "DNF"
+            }
+            if (status == 4) {
+                return "DSQ"
+            }
+            return pos
+        },
         GridPosDiff(pos, grid) {
             if ((pos - grid) > 0) {
                 return '▼'
