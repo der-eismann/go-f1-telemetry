@@ -210,12 +210,8 @@ var telemetry = new Vue({
                     return "▲"
                 case 1:
                     return "🏁"
-                case 2:
-                    return "●"
-                case 3:
-                    return "●"
                 default:
-                    return ""
+                    return "●"
             }
         },
         DriverStatusStyle(i) {
@@ -228,6 +224,8 @@ var telemetry = new Vue({
                     return "text-align:center; color: #c71616;"
                 case 3:
                     return "text-align:center; color: #66e649;"
+                case 4:
+                    return "text-align:center; color: #c71616;"
                 default:
                     return ""
             }
