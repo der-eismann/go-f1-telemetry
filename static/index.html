@@ -124,7 +124,7 @@
                     </div>
                     </br>
                     Fuel: {{ RemainingLaps }} laps {{ FuelMixText }} </br>
-                    ERS Mode: {{ Status.ERSMode }}
+                    ERS Mode: {{ ERSMode }}
                     <div class="progress">
                         <div v-bind:class="BarColor" role="progressbar" v-bind:aria-valuenow="ERSCharge" aria-valuemin="0" aria-valuemax="100" v-bind:style="BarWidth">
                             {{ ERSCharge }}% ERS
