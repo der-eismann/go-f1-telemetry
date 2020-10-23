@@ -203,10 +203,11 @@
                                 <!-- Team Color -->
                             </th>
                             <th>Team</th>
+                            <th></th>
+                            <th>Best Lap</th>
                             <th>
                                 <!-- Best Lap Tyre -->
                             </th>
-                            <th>Best Lap</th>
                             <th>
                                 <!-- Diff -->
                             </th>
@@ -228,8 +229,8 @@
                                 <td>{{ driver.Team }}</td>
                                 <td></td>
                                 <td>{{ LapTimeFormatted(driver.LapData.BestLapTime) }}</td>
-                                <td>{{ driver.LapData.Diff == null ? "" : '+' + SectorTimeFormatted(driver.LapData.Diff) }}
-                                </td>
+                                <td><img :src="TyreCompoundImg(driver.TyresBestLap)" :style="TyreVisibility(driver.TyresBestLap)"></td>
+                                <td>{{ driver.LapData.Diff == null ? "" : '+' + SectorTimeFormatted(driver.LapData.Diff) }}</td>
                                 <td>{{ SectorTimeFormatted(driver.LapData.BestLapSector1TimeInMS) }}</td>
                                 <td>{{ SectorTimeFormatted(driver.LapData.BestLapSector2TimeInMS) }}</td>
                                 <td>{{ SectorTimeFormatted(driver.LapData.BestLapSector3TimeInMS) }}</td>

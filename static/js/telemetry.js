@@ -60,6 +60,7 @@ var telemetry = new Vue({
                 Team: "",
                 TeamColor: "",
                 Tyres: "dry",
+                TyresBestLap: "",
                 TyresAge: 0,
                 Name: "",
                 Nation: "",
@@ -153,9 +154,6 @@ var telemetry = new Vue({
             }
             return moment.utc(moment.duration(SessionTime, "seconds").asMilliseconds()).format("mm:ss")
         },
-        Wurst: function() {
-            return this.Session.TimeLeft
-        },
         FuelMixText: function() {
             if (this.Status.FuelMix == 1) {
                 return "🔥🔥"
@@ -180,7 +178,16 @@ var telemetry = new Vue({
             return 'flag-icon flag-icon-' + country
         },
         TyreCompoundImg(tyreCompound) {
+            if (tyreCompound == "") {
+                return ""
+            }
             return "assets/" + tyreCompound + ".png"
+        },
+        TyreVisibility(tyreCompound) {
+            if (tyreCompound == "") {
+                return "visibility: hidden;"
+            }
+            return ""
         },
         TeamColorStyle(color) {
             return "background-color: #" + color + ";"

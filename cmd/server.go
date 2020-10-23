@@ -55,6 +55,8 @@ type App struct {
 // Telemetry is a struct that contains all available telemetry data
 type Telemetry struct {
 	PlayerArrayID                 uint8
+	SessionID                     uint64
+	BestLapTyres                  [22]BestLapTyres
 	NumActiveCars                 uint8
 	PacketMotionData              util.PacketMotionData
 	PacketSessionData             util.PacketSessionData
@@ -65,6 +67,11 @@ type Telemetry struct {
 	PacketCarStatusData           util.PacketCarStatusData
 	PacketFinalClassificationData util.PacketFinalClassificationData
 	PacketLobbyInfoData           util.PacketLobbyInfoData
+}
+
+type BestLapTyres struct {
+	BestLapTime float32
+	Tyres       string
 }
 
 func systrayOnReady() {
@@ -123,6 +130,10 @@ func (app *App) Listen(ctx context.Context, cmd *cobra.Command, args []string) {
 			logrus.Errorln("binary.Read failed:", err)
 		}
 		app.Data.PlayerArrayID = packetHeader.PlayerCarIndex
+		if app.Data.SessionID != packetHeader.SessionUID {
+			app.Data.BestLapTyres = [22]BestLapTyres{}
+			app.Data.SessionID = packetHeader.SessionUID
+		}
 
 		switch packetHeader.PacketID {
 		case MOTION:

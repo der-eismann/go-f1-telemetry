@@ -16,6 +16,7 @@ type RankingData struct {
 	Team           string
 	TeamColor      string
 	Tyres          string
+	TyresBestLap   string
 	TyreAge        uint8
 	Name           string
 	Nation         string

@@ -209,7 +209,7 @@ func (app *App) createRankingInfo() ([]byte, error) {
 			upperCaseName := bytes.Trim(app.Data.PacketParticipantsData.Participants[i].Name[:], "\x00")
 			if len(upperCaseName) > 0 {
 				rankingData[i].Name = string(upperCaseName[0]) + strings.ToLower(string(upperCaseName[1:]))
-		} else {
+			} else {
 				rankingData[i].Name = ""
 			}
 		} else {
@@ -223,6 +223,16 @@ func (app *App) createRankingInfo() ([]byte, error) {
 		}
 		if app.Data.PacketParticipantsData.Participants[i].RaceNumber != 0 {
 			activeCars++
+		}
+		if app.Data.BestLapTyres[i].BestLapTime != app.Data.PacketLapData.LapData[i].BestLapTime {
+			if app.Data.PacketCarStatusData.CarStatusData[i].VisualTyreCompound == 0 {
+				continue
+			}
+			app.Data.BestLapTyres[i].BestLapTime = app.Data.PacketLapData.LapData[i].BestLapTime
+			app.Data.BestLapTyres[i].Tyres = util.VisualTyreCompound[app.Data.PacketCarStatusData.CarStatusData[i].VisualTyreCompound]
+			rankingData[i].TyresBestLap = util.VisualTyreCompound[app.Data.PacketCarStatusData.CarStatusData[i].VisualTyreCompound]
+		} else {
+			rankingData[i].TyresBestLap = app.Data.BestLapTyres[i].Tyres
 		}
 	}
 	app.Data.NumActiveCars = activeCars
@@ -299,7 +309,7 @@ func (app *App) createRaceResult() ([]byte, error) {
 			upperCaseName := bytes.Trim(app.Data.PacketParticipantsData.Participants[i].Name[:], "\x00")
 			if len(upperCaseName) > 0 {
 				resultData[i].Name = string(upperCaseName[0]) + strings.ToLower(string(upperCaseName[1:]))
-		} else {
+			} else {
 				resultData[i].Name = ""
 			}
 		} else {
