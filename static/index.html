@@ -75,7 +75,10 @@
         </div>
         <div class="container" id="container">
             <div class="row">
-                <div id="session">
+                <div class="col-3" id="mapdiv">
+                    <canvas width="100" height="100" id="map" :style="{ backgroundImage: 'url(../tracks/' + Map.TrackID + '.png)', backgroundSize: '100%' }"></canvas>
+                </div>
+                <div class="col-9" id="session">
                     <h2><span :class="CountryString"></span> {{ Session.Track }} <i :class="WeatherString"></i> {{ Session.AirTemperature }}°C (Air) {{ Session.TrackTemperature }}°C (Track) - {{ Session.TrackLength }} m</h2>
                     <h3 v-if="Session.SessionType == 'R' || Session.SessionType == 'R2'">Race - {{ Session.LapsDone }}/{{ Session.TotalLaps }} laps - time: {{ SessionDurationFormatted }} - position: {{ Session.Position }}/{{ Session.TotalCars }}</h3>
                     <h3 v-else>{{ Session.SessionType }} - {{ Session.LapsDone }} {{ Session.LapsDone == 1 ? 'lap' : 'laps' }} done - time left: {{ SessionTimeLeftFormatted }} - position: {{ Session.Position }}/{{ Session.TotalCars }}</h3>
@@ -254,49 +257,56 @@
                 data.textContent = 'Connection closed';
             }
             conn.onmessage = function(evt) {
-                try {
-                    data = JSON.parse(evt.data);
-                } catch (err) {
-                    console.log("too much data!"); // happens when 2 messages are sent together
-                    return
+                messages = evt.data.split("----");
+                for (message of messages) {
+                    try {
+                        data = JSON.parse(message);
+                    } catch (err) {
+                        console.log("too much data!"); // happens when 2 messages are sent together
+                        return
+                    }
+
+                    //console.log(data);
+                    switch (data.MessageType) {
+                        case "SessionInfo":
+                            telemetry.Session = data;
+                            break;
+                        case "RankingInfo":
+                            data.RankingData = data.RankingData.slice(0, data.NumCars)
+                            for (i = 1; i < data.NumCars; i++) {
+                                if (data.RankingData[i].LapData.BestLapTime == 0 && data.SessionType != 'R') {
+                                    continue
+                                }
+                                data.RankingData[i].LapData.Diff = (data.RankingData[i].LapData.BestLapTime - data.RankingData[i - 1].LapData.BestLapTime) * 1000
+                                data.RankingData[i].LapData.DistDiff = (Math.round(data.RankingData[i - 1].LapData.TotalDistance - data.RankingData[i].LapData.TotalDistance) / 1000).toFixed(3)
+                            }
+                            telemetry.Ranking = data;
+                            break;
+                        case "CarStatusInfo":
+                            telemetry.Status = data;
+                            break;
+                        case "RaceResult":
+                            data.RaceResultData = data.RaceResultData.slice(0, data.NumCars)
+                            for (i = 0; i < data.NumCars; i++) {
+                                data.RaceResultData[i].Tyres = data.RaceResultData[i].Tyres.slice(0, data.RaceResultData[i].NumTyreStints)
+                                if (i == 0) {
+                                    continue
+                                }
+                                if (data.RaceResultData[i].ResultStatus == 3) {
+                                    data.RaceResultData[i].TotalTimeDiff = data.RaceResultData[i].TotalRaceTime - data.RaceResultData[i - 1].TotalRaceTime
+                                }
+                            }
+                            telemetry.Result = data;
+                            document.getElementById("overlay").style.display = "block";
+                            break;
+                        case "PositionInfo":
+                            telemetry.Map = data;
+                            break;
+                        default:
+                            break;
+                    }
                 }
 
-                //console.log(data);
-                switch (data.MessageType) {
-                    case "SessionInfo":
-                        telemetry.Session = data;
-                        break;
-                    case "RankingInfo":
-                        data.RankingData = data.RankingData.slice(0, data.NumCars)
-                        for (i = 1; i < data.NumCars; i++) {
-                            if (data.RankingData[i].LapData.BestLapTime == 0 && data.SessionType != 'R') {
-                                continue
-                            }
-                            data.RankingData[i].LapData.Diff = (data.RankingData[i].LapData.BestLapTime - data.RankingData[i - 1].LapData.BestLapTime) * 1000
-                            data.RankingData[i].LapData.DistDiff = (Math.round(data.RankingData[i - 1].LapData.TotalDistance - data.RankingData[i].LapData.TotalDistance) / 1000).toFixed(3)
-                        }
-                        telemetry.Ranking = data;
-                        break;
-                    case "CarStatusInfo":
-                        telemetry.Status = data;
-                        break;
-                    case "RaceResult":
-                        data.RaceResultData = data.RaceResultData.slice(0, data.NumCars)
-                        for (i = 0; i < data.NumCars; i++) {
-                            data.RaceResultData[i].Tyres = data.RaceResultData[i].Tyres.slice(0, data.RaceResultData[i].NumTyreStints)
-                            if (i == 0) {
-                                continue
-                            }
-                            if (data.RaceResultData[i].ResultStatus == 3) {
-                                data.RaceResultData[i].TotalTimeDiff = data.RaceResultData[i].TotalRaceTime - data.RaceResultData[i - 1].TotalRaceTime
-                            }
-                        }
-                        telemetry.Result = data;
-                        document.getElementById("overlay").style.display = "block";
-                        break;
-                    default:
-                        break;
-                }
             }
         })();
     </script>

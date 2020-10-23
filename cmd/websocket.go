@@ -54,6 +54,13 @@ func (app *App) generateJSON(hub *Hub) {
 					return
 				}
 				hub.broadcast <- carStatusInfo
+			case MOTION:
+				positionInfo, err := app.createPositionInfo()
+				if err != nil {
+					logrus.Error(err)
+					return
+				}
+				hub.broadcast <- positionInfo
 			case CLASSIFICATION:
 				if app.Data.PacketSessionData.SessionType == 10 {
 					raceResult, err := app.createRaceResult()
@@ -110,6 +117,7 @@ func (c *Client) writePump() {
 			n := len(c.send)
 			for i := 0; i < n; i++ {
 				w.Write(newline)
+				w.Write([]byte("----"))
 				w.Write(<-c.send)
 			}
 
@@ -331,6 +339,45 @@ func (app *App) createRaceResult() ([]byte, error) {
 	}
 
 	json, err := json.Marshal(raceResult)
+	if err != nil {
+		return []byte{}, err
+	}
+
+	return json, nil
+}
+
+func (app *App) createPositionInfo() ([]byte, error) {
+	positions := [22]Position{}
+	trackID := app.Data.PacketSessionData.TrackID
+
+	for i := uint8(0); i < 22; i++ {
+		positions[i].WorldPositionX = int(app.Data.PacketMotionData.CarMotionData[i].WorldPositionX)
+		positions[i].WorldPositionZ = int(app.Data.PacketMotionData.CarMotionData[i].WorldPositionZ)
+		positions[i].TeamColor = util.Teams[app.Data.PacketParticipantsData.Participants[i].TeamID][1]
+		if app.Data.PacketParticipantsData.Participants[i].AiControlled == 0 {
+			if len(string(bytes.Trim(app.Data.PacketParticipantsData.Participants[i].Name[:], "\x00"))) > 2 {
+				positions[i].Name = strings.ToUpper(string(bytes.Trim(app.Data.PacketParticipantsData.Participants[i].Name[:], "\x00"))[0:3])
+			}
+		} else {
+			if len(util.Drivers[app.Data.PacketParticipantsData.Participants[i].DriverID][1]) > 2 {
+				runeName := []rune(strings.ToUpper(util.Drivers[app.Data.PacketParticipantsData.Participants[i].DriverID][1]))
+				positions[i].Name = string(runeName[0:3])
+			}
+		}
+	}
+
+	positionData := PositionData{
+		MessageType:  "PositionInfo",
+		Positions:    positions,
+		TrackID:      trackID,
+		Rotation:     util.BorderCoordinates[trackID][4],
+		XTranslation: util.BorderCoordinates[trackID][5],
+		YTranslation: util.BorderCoordinates[trackID][6],
+		Width:        util.BorderCoordinates[trackID][7],
+		Height:       util.BorderCoordinates[trackID][8],
+	}
+
+	json, err := json.Marshal(positionData)
 	if err != nil {
 		return []byte{}, err
 	}

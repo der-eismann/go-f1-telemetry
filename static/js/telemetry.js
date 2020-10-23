@@ -87,6 +87,25 @@ var telemetry = new Vue({
                 NumTyreStints: 0,
                 Tyres: ["soft"]
             }]
+        },
+        Map: {
+            Width: 100,
+            Height: 100,
+            TrackID: 0,
+            XOffset: 0,
+            ZOffset: 0,
+            Positions: [{
+                WorldPositionX: 0,
+                WorldPositionZ: 0,
+                TeamColor: "#000000",
+                Name: "ABC"
+            }]
+        },
+        Canvas: null,
+        CanvasContext: null,
+        CanvasProps: {
+            Rotated: false,
+            Translated: false,
         }
     },
     computed: {
@@ -264,5 +283,55 @@ var telemetry = new Vue({
                 return "text-align: center;"
             }
         }
+    },
+    watch: {
+        Map: function(val) {
+            if (this.Canvas.getAttribute("height") != val.Height) {
+                this.Canvas.setAttribute("height", val.Height);
+            }
+            if (this.Canvas.getAttribute("width") != val.Width) {
+                this.Canvas.setAttribute("width", val.Width);
+            }
+            if (this.CanvasProps.Translated == false) {
+                this.CanvasContext.rotate(val.Rotation * Math.PI / 180);
+                this.CanvasContext.translate(val.XTranslation, val.YTranslation);
+                this.CanvasProps.Translated = true;
+            }
+
+            this.CanvasContext.strokeStyle = "#000000";
+            this.CanvasContext.lineWidth = 2;
+            this.CanvasContext.clearRect(-10000, -10000, 100000, 100000);
+            for (i = 0; i < 20; i++) {
+                var x = val.Positions[i].WorldPositionX;
+                var z = val.Positions[i].WorldPositionZ;
+                var color = val.Positions[i].TeamColor;
+                var name = val.Positions[i].Name;
+                // Un-Rotate to sign is upright
+                this.CanvasContext.translate(x, z);
+                this.CanvasContext.rotate(-val.Rotation * Math.PI / 180);
+                this.CanvasContext.font = "40px monospace"
+                this.CanvasContext.fillStyle = "#212121";
+                // Draw sign above circle
+                this.CanvasContext.fillRect(-42, -70, 80, 50)
+                this.CanvasContext.strokeRect(-42, -70, 80, 50)
+                this.CanvasContext.fillStyle = "#" + color;
+                this.CanvasContext.fillText(name, -35, -30)
+                this.CanvasContext.rotate(val.Rotation * Math.PI / 180);
+                this.CanvasContext.translate(-x, -z);
+                // Draw outer black circle
+                this.CanvasContext.beginPath();
+                this.CanvasContext.arc(x, z, 17, 0, 2 * Math.PI);
+                this.CanvasContext.stroke();
+                // Draw inner filled circle
+                this.CanvasContext.beginPath();
+                this.CanvasContext.arc(x, z, 16, 0, 2 * Math.PI);
+                this.CanvasContext.fill();
+            }
+        }
+    },
+    mounted: function() {
+        this.Canvas = document.getElementById("map");
+        var ctx = this.Canvas.getContext("2d");
+        this.CanvasContext = ctx;
     }
 });

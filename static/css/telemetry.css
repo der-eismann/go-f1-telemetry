@@ -61,9 +61,10 @@ table.weather>tbody>tr>td {
 
 #map {
     border: 1px solid #d3d3d3;
-    width: 25%;
-    background: url("../tracks/melbourne.png");
-    background-size: 100%;
+    /* height: 50%; */
+    height: 200px;
+    /* background: url("../tracks/0.png"); */
+    /* background-color: #212121; */
 }
 
 ul {
