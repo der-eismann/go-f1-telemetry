@@ -11,7 +11,7 @@ import (
 	"github.com/der-eismann/telemetry/pkg/util"
 	"github.com/getlantern/systray"
 	"github.com/gobuffalo/packr/v2"
-	"github.com/rebuy-de/rebuy-go-sdk/v2/pkg/cmdutil"
+	"github.com/rebuy-de/rebuy-go-sdk/v3/pkg/cmdutil"
 	"github.com/sirupsen/logrus"
 	"github.com/skratchdot/open-golang/open"
 	"github.com/spf13/cobra"
