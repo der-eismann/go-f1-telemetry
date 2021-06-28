@@ -65,6 +65,7 @@ table.weather>tbody>tr>td {
     height: 200px;
     /* background: url("../tracks/0.png"); */
     /* background-color: #212121; */
+    background-size: '100%';
 }
 
 ul {
