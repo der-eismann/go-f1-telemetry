@@ -96,7 +96,8 @@ func (app *App) Listen(ctx context.Context, cmd *cobra.Command, args []string) {
 	go systray.Run(systrayOnReady, nil)
 
 	app.c = make(chan int)
-	pc, err := net.ListenPacket("udp", ":20777")
+	lc := net.ListenConfig{}
+	pc, err := lc.ListenPacket(ctx, "udp", ":20777")
 	if err != nil {
 		logrus.Fatal(err)
 	}
