@@ -76,7 +76,7 @@
         <div class="container" id="container">
             <div class="row">
                 <div class="col-3" id="mapdiv">
-                    <canvas width="100" height="100" id="map" :style="{ backgroundImage: 'url(../tracks/' + Map.TrackID + '.png)', backgroundSize: '100%' }"></canvas>
+                    <canvas width="100" height="100" id="map" :style="{ backgroundImage: 'url(../tracks/' + Map.TrackID + '.svg)', backgroundSize: '100%' }"></canvas>
                 </div>
                 <div class="col-9" id="session">
                     <h2><span :class="CountryString"></span> {{ Session.Track }} <i :class="WeatherString"></i> {{ Session.AirTemperature }}°C (Air) {{ Session.TrackTemperature }}°C (Track) - {{ Session.TrackLength }} m</h2>
