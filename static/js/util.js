@@ -34,3 +34,66 @@ function getColorForPercentage(pct) {
 function Sleep(milliseconds) {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
+
+function connect() {
+    var conn = new ReconnectingWebSocket("ws://localhost:8080/ws");
+    conn.onclose = function(evt) {
+        console.log('Socket is closed. Reconnect will be attempted.');
+        telemetry.Connected = false;
+    }
+    conn.onopen = function() {
+        telemetry.Connected = true;
+    }
+    conn.onmessage = function(evt) {
+        messages = evt.data.split("----");
+        for (message of messages) {
+            try {
+                data = JSON.parse(message);
+            } catch (err) {
+                console.log("too much data!"); // happens when 2 messages are sent together
+                return
+            }
+
+            //console.log(data);
+            switch (data.MessageType) {
+                case "SessionInfo":
+                    telemetry.Session = data;
+                    break;
+                case "RankingInfo":
+                    data.RankingData = data.RankingData.slice(0, data.NumCars)
+                    for (i = 1; i < data.NumCars; i++) {
+                        if (data.RankingData[i].LapData.BestLapTime == 0 && data.SessionType != 'R') {
+                            continue
+                        }
+                        data.RankingData[i].LapData.Diff = (data.RankingData[i].LapData.BestLapTime - data.RankingData[i - 1].LapData.BestLapTime) * 1000
+                        data.RankingData[i].LapData.DistDiff = (Math.round(data.RankingData[i - 1].LapData.TotalDistance - data.RankingData[i].LapData.TotalDistance) / 1000).toFixed(3)
+                    }
+                    telemetry.Ranking = data;
+                    break;
+                case "CarStatusInfo":
+                    telemetry.Status = data;
+                    break;
+                case "RaceResult":
+                    data.RaceResultData = data.RaceResultData.slice(0, data.NumCars)
+                    for (i = 0; i < data.NumCars; i++) {
+                        data.RaceResultData[i].Tyres = data.RaceResultData[i].Tyres.slice(0, data.RaceResultData[i].NumTyreStints)
+                        if (i == 0) {
+                            continue
+                        }
+                        if (data.RaceResultData[i].ResultStatus == 3) {
+                            data.RaceResultData[i].TotalTimeDiff = data.RaceResultData[i].TotalRaceTime - data.RaceResultData[i - 1].TotalRaceTime
+                        }
+                    }
+                    telemetry.Result = data;
+                    document.getElementById("overlay").style.display = "block";
+                    break;
+                case "PositionInfo":
+                    data.Positions = data.Positions.slice(0, data.NumCars)
+                    telemetry.Map = data;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+}

@@ -103,12 +103,15 @@ var telemetry = new Vue({
         },
         Canvas: null,
         CanvasContext: null,
-        CanvasProps: {
-            Rotated: false,
-            Translated: false,
-        }
+        Connected: false
     },
     computed: {
+        ConnectedColor: function() {
+            if (this.Connected) {
+                return "color: #66e649;";
+            }
+            return "color: #c71616;";
+        },
         ERSCharge: function() {
             return Math.round(this.Status.ErsStoreEnergy / fullERS * 1000) / 10
         },
