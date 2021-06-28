@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"math"
 	"net/http"
 	"sort"
 	"strconv"
@@ -351,8 +352,14 @@ func (app *App) createPositionInfo() ([]byte, error) {
 	trackID := app.Data.PacketSessionData.TrackID
 
 	for i := uint8(0); i < 22; i++ {
-		positions[i].WorldPositionX = int(app.Data.PacketMotionData.CarMotionData[i].WorldPositionX)
-		positions[i].WorldPositionZ = int(app.Data.PacketMotionData.CarMotionData[i].WorldPositionZ)
+		x, z := rotateCoordinates(
+			app.Data.PacketMotionData.CarMotionData[i].WorldPositionX,
+			app.Data.PacketMotionData.CarMotionData[i].WorldPositionZ,
+			util.BorderCoordinates[trackID].Rotation,
+		)
+
+		positions[i].WorldPositionX = int(x) - util.BorderCoordinates[trackID].MinRotated.X
+		positions[i].WorldPositionZ = int(z) - util.BorderCoordinates[trackID].MinRotated.Z
 		positions[i].TeamColor = util.Teams[app.Data.PacketParticipantsData.Participants[i].TeamID][1]
 		if app.Data.PacketParticipantsData.Participants[i].AiControlled == 0 {
 			if len(string(bytes.Trim(app.Data.PacketParticipantsData.Participants[i].Name[:], "\x00"))) > 2 {
@@ -367,14 +374,13 @@ func (app *App) createPositionInfo() ([]byte, error) {
 	}
 
 	positionData := PositionData{
-		MessageType:  "PositionInfo",
-		Positions:    positions,
-		TrackID:      trackID,
-		Rotation:     util.BorderCoordinates[trackID][4],
-		XTranslation: util.BorderCoordinates[trackID][5],
-		YTranslation: util.BorderCoordinates[trackID][6],
-		Width:        util.BorderCoordinates[trackID][7],
-		Height:       util.BorderCoordinates[trackID][8],
+		MessageType: "PositionInfo",
+		NumCars:     app.Data.NumActiveCars,
+		Positions:   positions,
+		TrackID:     trackID,
+		Width:       -util.BorderCoordinates[trackID].MinRotated.X + util.BorderCoordinates[trackID].MaxRotated.X,
+		Height:      -util.BorderCoordinates[trackID].MinRotated.Z + util.BorderCoordinates[trackID].MaxRotated.Z,
+		PlayerID:    app.Data.PlayerArrayID,
 	}
 
 	json, err := json.Marshal(positionData)
@@ -383,4 +389,11 @@ func (app *App) createPositionInfo() ([]byte, error) {
 	}
 
 	return json, nil
+}
+
+func rotateCoordinates(x, z, deg float32) (float64, float64) {
+	rotation := float64(deg) * (math.Pi / 180)
+	xRot := (float64(x) * math.Cos(rotation)) - (float64(z) * math.Sin(rotation))
+	zRot := (float64(x) * math.Sin(rotation)) + (float64(z) * math.Cos(rotation))
+	return xRot, zRot
 }

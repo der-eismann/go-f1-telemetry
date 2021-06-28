@@ -1,5 +1,18 @@
 package util
 
+type Coords struct {
+	X int
+	Z int
+}
+
+type BorderCoordinatesStruct struct {
+	Min        Coords
+	Max        Coords
+	Rotation   float32
+	MinRotated Coords
+	MaxRotated Coords
+}
+
 // Weather maps the integer values to weather strings
 var Weather = map[uint8]string{
 	0: "clear",
@@ -434,35 +447,203 @@ var ResultStatus = map[uint8]string{
 	6: "retired",
 }
 
-// BorderCoordinates stores the maximum outer coordinates for each track
-// minX, maxX, minY, maxY, rotation, translationX, translationY, width, height
-var BorderCoordinates = map[int8][9]float32{
-	-1: {0, 0, 0, 0, 0, 0, 0, 0},
-	0:  {-750, 750, -900, 900, -44, 260, 1100, 2050, 1090},
-	1:  {-1100, 1100, -700, 600, 0, 1100, 700, 2200, 1300},
-	2:  {-650, 650, -570, 570, 123.5, 100, -1080, 1420, 960},
-	3:  {-450, 450, -650, 650, -92.5, -446, 607, 1260, 850},
-	4:  {-570, 470, -630, 610, 57, 650, -470, 1450, 500},
-	5:  {-400, 450, -500, 550, 53, 590, -295, 1215, 490},
-	6:  {-250, 480, -480, 1520, 89, 250, -1490, 2000, 730},
-	7:  {-650, 450, -800, 1030, 90, 650, -1030, 1830, 1100},
-	8:  {-820, 720, -460, 540, 0, 0, 0, 0, 0},
-	9:  {-650, 510, -660, 640, 51, 680, -80, 1050, 1000},
-	10: {-770, 590, -1100, 1020, -95, -750, 1020, 2100, 1350},
-	11: {-680, 680, -1130, 1130, -95, -730, 1130, 2360, 1250},
-	12: {-760, 780, -470, 520, 0, 760, 470, 1540, 990},
-	13: {-1040, 1040, -550, 540, 0, 1040, 550, 2080, 1090},
-	14: {-770, 880, -360, 700, 0, 770, 360, 1650, 1060},
-	15: {-860, 1030, -90, 1080, 0, 860, 90, 1890, 1170},
-	16: {-610, 150, -390, 740, -90, -150, 390, 1130, 760},
-	17: {-580, 780, -530, 350, 0, 580, 530, 1360, 880},
-	18: {-920, 1000, -620, 670, 0, 920, 620, 1920, 1290},
-	19: {-1070, 560, -1070, 110, 0, 1070, 1070, 1630, 1180},
-	20: {-1230, 930, -940, 640, 33.5, 1420, -140, 2400, 760},
-	21: {-460, 360, -650, 640, 0, 0, 0, 0, 0},
-	22: {-650, 360, -70, 1030, 0, 0, 0, 0, 0},
-	23: {-865, 130, 230, 1080, 0, 0, 0, 0, 0},
-	24: {260, -325, 1040, 540, 0, 0, 0, 0, 0},
-	25: {-700, 800, -800, 850, 112, 330, -1280, 1750, 1250},
-	26: {-500, 550, -450, 480, 0, 500, 450, 1050, 930},
+// BorderCoordinates stores the outer coordinates for each track
+// and the degrees of rotation to show it better
+var BorderCoordinates = map[int8]BorderCoordinatesStruct{
+	-1: {
+		Min:        Coords{X: 0, Z: 0},
+		Max:        Coords{X: 0, Z: 0},
+		Rotation:   0,
+		MinRotated: Coords{X: 0, Z: 0},
+		MaxRotated: Coords{X: 0, Z: 0},
+	},
+	0: {
+		Min:        Coords{X: -780, Z: -920},
+		Max:        Coords{X: 780, Z: 920},
+		Rotation:   -44,
+		MinRotated: Coords{X: -940, Z: -610},
+		MaxRotated: Coords{X: 1100, Z: 460},
+	},
+	1: {
+		Min:        Coords{X: -1120, Z: -700},
+		Max:        Coords{X: 1090, Z: 610},
+		Rotation:   -4,
+		MinRotated: Coords{X: -1160, Z: -630},
+		MaxRotated: Coords{X: 1120, Z: 550},
+	},
+	2: {
+		Min:        Coords{X: -660, Z: -580},
+		Max:        Coords{X: 660, Z: 580},
+		Rotation:   123.5,
+		MinRotated: Coords{X: -830, Z: -680},
+		MaxRotated: Coords{X: 590, Z: 280},
+	},
+	3: {
+		Min:        Coords{X: -460, Z: -650},
+		Max:        Coords{X: 450, Z: 640},
+		Rotation:   -92.5,
+		MinRotated: Coords{X: -630, Z: -430},
+		MaxRotated: Coords{X: 650, Z: 440},
+	},
+	4: {
+		Min:        Coords{X: -580, Z: -640},
+		Max:        Coords{X: 490, Z: 610},
+		Rotation:   57,
+		MinRotated: Coords{X: -760, Z: -400}, // +/-100px on z-axis
+		MaxRotated: Coords{X: 700, Z: 310},   // to achieve a 2:1 ratio
+	},
+	5: {
+		Min:        Coords{X: -400, Z: -500},
+		Max:        Coords{X: 440, Z: 550},
+		Rotation:   53,
+		MinRotated: Coords{X: -600, Z: -360}, // +/-50px on z-axis
+		MaxRotated: Coords{X: 640, Z: 250},   // to achieve a 2:1 ratio
+	},
+	6: {
+		Min:        Coords{X: -240, Z: -490},
+		Max:        Coords{X: 480, Z: 1520},
+		Rotation:   110,
+		MinRotated: Coords{X: -1570, Z: -640}, // +/-160px on z-axis
+		MaxRotated: Coords{X: 460, Z: 380},    // to achieve a 2:1 ratio
+	},
+	7: {
+		Min:        Coords{X: -660, Z: -800},
+		Max:        Coords{X: 450, Z: 1030},
+		Rotation:   90,
+		MinRotated: Coords{X: -1030, Z: -660},
+		MaxRotated: Coords{X: 800, Z: 450},
+	},
+	8: {
+		Min:        Coords{X: 0, Z: 0},
+		Max:        Coords{X: 0, Z: 0},
+		Rotation:   0,
+		MinRotated: Coords{X: 0, Z: 0},
+		MaxRotated: Coords{X: 0, Z: 0},
+	},
+	9: {
+		Min:        Coords{X: -650, Z: -660},
+		Max:        Coords{X: 510, Z: 640},
+		Rotation:   51,
+		MinRotated: Coords{X: -500, Z: -490},
+		MaxRotated: Coords{X: 580, Z: 530},
+	},
+	10: {
+		Min:        Coords{X: -770, Z: -1110},
+		Max:        Coords{X: 600, Z: 1020},
+		Rotation:   -95,
+		MinRotated: Coords{X: -1060, Z: -640},
+		MaxRotated: Coords{X: 1000, Z: 710},
+	},
+	11: {
+		Min:        Coords{X: -680, Z: -1130},
+		Max:        Coords{X: 680, Z: 1140},
+		Rotation:   -95,
+		MinRotated: Coords{X: -1170, Z: -610},
+		MaxRotated: Coords{X: 1170, Z: 620},
+	},
+	12: {
+		Min:        Coords{X: -760, Z: -470},
+		Max:        Coords{X: 780, Z: 530},
+		Rotation:   0,
+		MinRotated: Coords{X: -760, Z: -470},
+		MaxRotated: Coords{X: 780, Z: 530},
+	},
+	13: {
+		Min:        Coords{X: -1040, Z: -550},
+		Max:        Coords{X: 1050, Z: 540},
+		Rotation:   0,
+		MinRotated: Coords{X: -1040, Z: -550},
+		MaxRotated: Coords{X: 1050, Z: 540},
+	},
+	14: {
+		Min:        Coords{X: -780, Z: -360},
+		Max:        Coords{X: 880, Z: 710},
+		Rotation:   0,
+		MinRotated: Coords{X: -780, Z: -360},
+		MaxRotated: Coords{X: 880, Z: 710},
+	},
+	15: {
+		Min:        Coords{X: -870, Z: -90},
+		Max:        Coords{X: 1040, Z: 1080},
+		Rotation:   0,
+		MinRotated: Coords{X: -870, Z: -90},
+		MaxRotated: Coords{X: 1040, Z: 1080},
+	},
+	16: {
+		Min:        Coords{X: -610, Z: -390},
+		Max:        Coords{X: 150, Z: 750},
+		Rotation:   -90,
+		MinRotated: Coords{X: -390, Z: -150},
+		MaxRotated: Coords{X: 740, Z: 610},
+	},
+	17: {
+		Min:        Coords{X: -580, Z: -530},
+		Max:        Coords{X: 780, Z: 350},
+		Rotation:   0,
+		MinRotated: Coords{X: -580, Z: -530},
+		MaxRotated: Coords{X: 780, Z: 350},
+	},
+	18: {
+		Min:        Coords{X: -920, Z: -620},
+		Max:        Coords{X: 1000, Z: 670},
+		Rotation:   0,
+		MinRotated: Coords{X: -920, Z: -620},
+		MaxRotated: Coords{X: 1000, Z: 670},
+	},
+	19: {
+		Min:        Coords{X: -1070, Z: -1070},
+		Max:        Coords{X: 560, Z: 110},
+		Rotation:   0,
+		MinRotated: Coords{X: -1070, Z: -1070},
+		MaxRotated: Coords{X: 560, Z: 110},
+	},
+	20: {
+		Min:        Coords{X: -1230, Z: -940},
+		Max:        Coords{X: 940, Z: 640},
+		Rotation:   21.5,
+		MinRotated: Coords{X: -1290, Z: -810}, // +/-200px on z-axis
+		MaxRotated: Coords{X: 1100, Z: 480},   // to achieve a 2:1 ratio
+	},
+	21: {
+		Min:        Coords{X: -460, Z: -650},
+		Max:        Coords{X: 360, Z: 640},
+		Rotation:   -92.5,
+		MinRotated: Coords{X: -630, Z: -370},
+		MaxRotated: Coords{X: 650, Z: 440},
+	},
+	22: {
+		Min:        Coords{X: -660, Z: -80},
+		Max:        Coords{X: 370, Z: 1030},
+		Rotation:   63,
+		MinRotated: Coords{X: -1000, Z: -350},
+		MaxRotated: Coords{X: 130, Z: 430},
+	},
+	23: {
+		Min:        Coords{X: -870, Z: 130},
+		Max:        Coords{X: 230, Z: 1080},
+		Rotation:   0,
+		MinRotated: Coords{X: -870, Z: 130},
+		MaxRotated: Coords{X: 230, Z: 1080},
+	},
+	24: {
+		Min:        Coords{X: 260, Z: -320},
+		Max:        Coords{X: 1040, Z: 540},
+		Rotation:   -25,
+		MinRotated: Coords{X: 140, Z: -470},
+		MaxRotated: Coords{X: 1130, Z: 110},
+	},
+	25: {
+		Min:        Coords{X: -690, Z: -790},
+		Max:        Coords{X: 790, Z: 830},
+		Rotation:   112,
+		MinRotated: Coords{X: -1040, Z: -780},
+		MaxRotated: Coords{X: 690, Z: 470},
+	},
+	26: {
+		Min:        Coords{X: -510, Z: -460},
+		Max:        Coords{X: 550, Z: 490},
+		Rotation:   15.5,
+		MinRotated: Coords{X: -580, Z: -490},
+		MaxRotated: Coords{X: 530, Z: 390},
+	},
 }

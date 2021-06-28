@@ -95,14 +95,13 @@ type RaceResultData struct {
 }
 
 type PositionData struct {
-	MessageType  string
-	Width        float32
-	Height       float32
-	TrackID      int8
-	Rotation     float32
-	XTranslation float32
-	YTranslation float32
-	Positions    [22]Position
+	MessageType string
+	NumCars     uint8
+	Width       int
+	Height      int
+	TrackID     int8
+	PlayerID    uint8
+	Positions   [22]Position
 }
 
 type Position struct {
