@@ -208,13 +208,13 @@ type CarSetupData struct {
 }
 
 // PacketCarTelemetryData details telemetry for all the cars in the race
-// 1327 bytes
+// 1323 bytes
 type PacketCarTelemetryData struct {
-	CarTelemetryData             [22]CarTelemetryData
-	ButtonStatus                 uint32 // Bit flags specifying which buttons are being pressed currently - see appendices
-	MFDPanelIndex                uint8  // Index of MFD panel open - 255 = MFD closed, Single player, race – 0 = Car setup, 1 = Pits, 2 = Damage, 3 =  Engine, 4 = Temperatures
-	MFDPanelIndexSecondaryPlayer uint8  // See above
-	SuggestedGear                int8   // Suggested gear for the player (1-8), 0 if no gear suggested
+	CarTelemetryData [22]CarTelemetryData
+	//ButtonStatus                 uint32 // Bit flags specifying which buttons are being pressed currently - see appendices
+	MFDPanelIndex                uint8 // Index of MFD panel open - 255 = MFD closed, Single player, race – 0 = Car setup, 1 = Pits, 2 = Damage, 3 =  Engine, 4 = Temperatures
+	MFDPanelIndexSecondaryPlayer uint8 // See above
+	SuggestedGear                int8  // Suggested gear for the player (1-8), 0 if no gear suggested
 }
 
 // CarTelemetryData details telemetry for a car in the race
@@ -332,7 +332,7 @@ type CarDamageData struct {
 	FloorDamage          uint8      // Floor damage (percentage)
 	DiffuserDamage       uint8      // Diffuser damage (percentage)
 	SidepodDamage        uint8      // Sidepod damage (percentage)
-	DrsFault             uint8      // Indicator for DRS fault, 0 = OK, 1 = fault
+	DRSFault             uint8      // Indicator for DRS fault, 0 = OK, 1 = fault
 	GearBoxDamage        uint8      // Gear box damage (percentage)
 	EngineDamage         uint8      // Engine damage (percentage)
 	EngineMGUHWear       uint8      // Engine wear MGU-H (percentage)

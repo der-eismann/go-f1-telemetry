@@ -87,27 +87,27 @@ func (app *App) DummyPacket(ctx context.Context, cmd *cobra.Command, args []stri
 	packet := SessionPacket{
 		Header: sessionHeader,
 		Session: util.PacketSessionData{
-			Weather:                  1,
-			TrackTemperature:         34,
-			AirTemperature:           20,
-			TotalLaps:                16,
-			TrackLength:              5234,
-			SessionType:              1,
-			TrackID:                  4,
-			Formula:                  0,
-			SessionTimeLeft:          4500,
-			SessionDuration:          9000,
-			PitSpeedLimit:            60,
-			GamePaused:               0,
-			IsSpectating:             0,
-			SpectatorCarIndex:        0,
-			SLIProNativeSupport:      0,
-			NumMarshalZones:          16,
-			MarshalZones:             [21]util.MarshalZone{},
-			SafetyCarStatus:          1,
-			NetworkGame:              1,
-			NumWeatherForecastSample: 4,
-			WeatherForecastSamples: [20]util.WeatherForecastSample{
+			Weather:                   1,
+			TrackTemperature:          34,
+			AirTemperature:            20,
+			TotalLaps:                 16,
+			TrackLength:               5234,
+			SessionType:               1,
+			TrackID:                   4,
+			Formula:                   0,
+			SessionTimeLeft:           4500,
+			SessionDuration:           9000,
+			PitSpeedLimit:             60,
+			GamePaused:                0,
+			IsSpectating:              0,
+			SpectatorCarIndex:         0,
+			SLIProNativeSupport:       0,
+			NumMarshalZones:           16,
+			MarshalZones:              [21]util.MarshalZone{},
+			SafetyCarStatus:           1,
+			NetworkGame:               1,
+			NumWeatherForecastSamples: 4,
+			WeatherForecastSamples: [56]util.WeatherForecastSample{
 				{
 					Weather:     0,
 					TimeOffset:  0,
@@ -135,9 +135,6 @@ func (app *App) DummyPacket(ctx context.Context, cmd *cobra.Command, args []stri
 	participantsData.NumActiveCars = 21
 	lapdata := util.PacketLapData{}
 	for i := uint8(0); i < participantsData.NumActiveCars; i++ {
-		lapdata.LapData[i].LastLapTime = rand.Float32()
-		lapdata.LapData[i].CurrentLapTime = rand.Float32()
-		lapdata.LapData[i].BestLapTime = rand.Float32()
 		lapdata.LapData[i].LapDistance = rand.Float32()
 		lapdata.LapData[i].TotalDistance = rand.Float32()
 		lapdata.LapData[i].SafetyCarDelta = rand.Float32()

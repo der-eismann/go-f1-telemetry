@@ -53,19 +53,16 @@ type CarStatus struct {
 	TyresSurfaceTemperature [4]uint8
 	TyresInnerTemperature   [4]uint8
 	EngineTemperature       uint16
-	TyresPressure           [4]float32
 	FuelRemainingLaps       float32
-	TyresWear               [4]uint8
 	TyreVisualCompound      uint8
-	TyresDamage             [4]uint8
-	FrontLeftWingDamage     uint8
-	FuelMix                 uint8
-	FrontRightWingDamage    uint8
-	RearWingDamage          uint8
-	EngineDamage            uint8
-	GearBoxDamage           uint8
 	ErsStoreEnergy          float32
 	ErsDeployMode           uint8
+	TyresWear               [4]float32
+	FrontLeftWingDamage     uint8
+	FrontRightWingDamage    uint8
+	RearWingDamage          uint8
+	DiffuserDamage          uint8
+	SidepodDamage           uint8
 }
 
 // RaceResult contains all information about the end of a race

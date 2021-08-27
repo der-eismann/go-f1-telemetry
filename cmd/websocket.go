@@ -175,7 +175,7 @@ func (app *App) createSessionInfo() ([]byte, error) {
 	}
 	forecasts := []WeatherForecast{}
 
-	for i := uint8(0); i < app.Data.PacketSessionData.NumWeatherForecastSample; i++ {
+	for i := uint8(0); i < app.Data.PacketSessionData.NumWeatherForecastSamples; i++ {
 		forecast := WeatherForecast{
 			SessionType: util.SessionType[app.Data.PacketSessionData.WeatherForecastSamples[i].SessionType],
 			TimeOffset:  app.Data.PacketSessionData.WeatherForecastSamples[i].TimeOffset,
@@ -233,11 +233,11 @@ func (app *App) createRankingInfo() ([]byte, error) {
 		if app.Data.PacketParticipantsData.Participants[i].RaceNumber != 0 {
 			activeCars++
 		}
-		if app.Data.BestLapTyres[i].BestLapTime != app.Data.PacketLapData.LapData[i].BestLapTime {
+		if app.Data.BestLapTyres[i].BestLapTimeInMS != app.Data.PacketSessionHistoryData[i].LapHistoryData[app.Data.PacketSessionHistoryData[i].BestLapTimeLapNum].LapTimeInMS {
 			if app.Data.PacketCarStatusData.CarStatusData[i].VisualTyreCompound == 0 {
 				continue
 			}
-			app.Data.BestLapTyres[i].BestLapTime = app.Data.PacketLapData.LapData[i].BestLapTime
+			app.Data.BestLapTyres[i].BestLapTimeInMS = app.Data.PacketSessionHistoryData[i].LapHistoryData[app.Data.PacketSessionHistoryData[i].BestLapTimeLapNum].LapTimeInMS
 			app.Data.BestLapTyres[i].Tyres = util.VisualTyreCompound[app.Data.PacketCarStatusData.CarStatusData[i].VisualTyreCompound]
 			rankingData[i].TyresBestLap = util.VisualTyreCompound[app.Data.PacketCarStatusData.CarStatusData[i].VisualTyreCompound]
 		} else {
@@ -271,19 +271,16 @@ func (app *App) createStatusInfo() ([]byte, error) {
 		TyresSurfaceTemperature: app.Data.PacketCarTelemetryData.CarTelemetryData[app.Data.PlayerArrayID].TyresSurfaceTemperature,
 		TyresInnerTemperature:   app.Data.PacketCarTelemetryData.CarTelemetryData[app.Data.PlayerArrayID].TyresInnerTemperature,
 		EngineTemperature:       app.Data.PacketCarTelemetryData.CarTelemetryData[app.Data.PlayerArrayID].EngineTemperature,
-		TyresPressure:           app.Data.PacketCarTelemetryData.CarTelemetryData[app.Data.PlayerArrayID].TyresPressure,
 		FuelRemainingLaps:       app.Data.PacketCarStatusData.CarStatusData[app.Data.PlayerArrayID].FuelRemainingLaps,
-		TyresWear:               app.Data.PacketCarStatusData.CarStatusData[app.Data.PlayerArrayID].TyresWear,
 		TyreVisualCompound:      app.Data.PacketCarStatusData.CarStatusData[app.Data.PlayerArrayID].VisualTyreCompound,
-		TyresDamage:             app.Data.PacketCarStatusData.CarStatusData[app.Data.PlayerArrayID].TyresDamage,
-		FuelMix:                 app.Data.PacketCarStatusData.CarStatusData[app.Data.PlayerArrayID].FuelMix,
-		FrontLeftWingDamage:     app.Data.PacketCarStatusData.CarStatusData[app.Data.PlayerArrayID].FrontLeftWingDamage,
-		FrontRightWingDamage:    app.Data.PacketCarStatusData.CarStatusData[app.Data.PlayerArrayID].FrontRightWingDamage,
-		RearWingDamage:          app.Data.PacketCarStatusData.CarStatusData[app.Data.PlayerArrayID].RearWingDamage,
-		EngineDamage:            app.Data.PacketCarStatusData.CarStatusData[app.Data.PlayerArrayID].EngineDamage,
-		GearBoxDamage:           app.Data.PacketCarStatusData.CarStatusData[app.Data.PlayerArrayID].GearBoxDamage,
 		ErsStoreEnergy:          app.Data.PacketCarStatusData.CarStatusData[app.Data.PlayerArrayID].ERSStoreEnergy,
 		ErsDeployMode:           app.Data.PacketCarStatusData.CarStatusData[app.Data.PlayerArrayID].ERSDeployMode,
+		TyresWear:               app.Data.PacketCarDamageData.CarDamageData[app.Data.PlayerArrayID].TyresWear,
+		FrontLeftWingDamage:     app.Data.PacketCarDamageData.CarDamageData[app.Data.PlayerArrayID].FrontLeftWingDamage,
+		FrontRightWingDamage:    app.Data.PacketCarDamageData.CarDamageData[app.Data.PlayerArrayID].FrontRightWingDamage,
+		RearWingDamage:          app.Data.PacketCarDamageData.CarDamageData[app.Data.PlayerArrayID].RearWingDamage,
+		DiffuserDamage:          app.Data.PacketCarDamageData.CarDamageData[app.Data.PlayerArrayID].DiffuserDamage,
+		SidepodDamage:           app.Data.PacketCarDamageData.CarDamageData[app.Data.PlayerArrayID].SidepodDamage,
 	}
 
 	json, err := json.Marshal(carStatus)
@@ -307,7 +304,7 @@ func (app *App) createRaceResult() ([]byte, error) {
 			Points:        app.Data.PacketFinalClassificationData.ClassificationData[i].Points,
 			NumPitStops:   app.Data.PacketFinalClassificationData.ClassificationData[i].NumPitStops,
 			ResultStatus:  app.Data.PacketFinalClassificationData.ClassificationData[i].ResultStatus,
-			BestLapTime:   app.Data.PacketFinalClassificationData.ClassificationData[i].BestLapTime,
+			BestLapTime:   float32(app.Data.PacketFinalClassificationData.ClassificationData[i].BestLapTimeInMS) / 1000,
 			TotalRaceTime: app.Data.PacketFinalClassificationData.ClassificationData[i].TotalRaceTime,
 			PenaltiesTime: app.Data.PacketFinalClassificationData.ClassificationData[i].PenaltiesTime,
 			NumTyreStints: app.Data.PacketFinalClassificationData.ClassificationData[i].NumTyreStints,

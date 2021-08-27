@@ -33,6 +33,8 @@ const (
 	CARSTATUS      = 7
 	CLASSIFICATION = 8
 	LOBBYINFO      = 9
+	CARDAMAGE      = 10
+	SESSIONHISTORY = 11
 	HEADER         = 255
 )
 
@@ -48,7 +50,9 @@ var bufferSizes = map[int]int{
 	CARTELEMETRY:   1307,
 	CARSTATUS:      1344,
 	CLASSIFICATION: 839,
+	CARDAMAGE:      858,
 	LOBBYINFO:      1169,
+	SESSIONHISTORY: 1131,
 }
 
 type App struct {
@@ -71,11 +75,13 @@ type Telemetry struct {
 	PacketCarStatusData           util.PacketCarStatusData
 	PacketFinalClassificationData util.PacketFinalClassificationData
 	PacketLobbyInfoData           util.PacketLobbyInfoData
+	PacketCarDamageData           util.PacketCarDamageData
+	PacketSessionHistoryData      [22]util.PacketSessionHistoryData
 }
 
 type BestLapTyres struct {
-	BestLapTime float32
-	Tyres       string
+	BestLapTimeInMS uint32
+	Tyres           string
 }
 
 func systrayOnReady() {
@@ -216,6 +222,24 @@ func (app *App) Listen(ctx context.Context, cmd *cobra.Command, args []string) {
 			app.c <- LOBBYINFO
 			elapsed := time.Since(start)
 			logrus.Debugf("LOBBYINFO read took %s", elapsed)
+		case CARDAMAGE:
+			r := bytes.NewReader(buf[bufferSizes[HEADER]:bufferSizes[CARDAMAGE]])
+			if err := binary.Read(r, binary.LittleEndian, &app.Data.PacketCarDamageData); err != nil {
+				logrus.Errorln("CARDAMAGE binary.Read failed:", err)
+			}
+			app.c <- CARDAMAGE
+			elapsed := time.Since(start)
+			logrus.Debugf("CARDAMAGE read took %s", elapsed)
+		case SESSIONHISTORY:
+			r := bytes.NewReader(buf[bufferSizes[HEADER]:bufferSizes[SESSIONHISTORY]])
+			var tempStore util.PacketSessionHistoryData
+			if err := binary.Read(r, binary.LittleEndian, &tempStore); err != nil {
+				logrus.Errorln("SESSIONHISTORY binary.Read failed:", err)
+			}
+			app.Data.PacketSessionHistoryData[tempStore.CarID] = tempStore
+			app.c <- SESSIONHISTORY
+			elapsed := time.Since(start)
+			logrus.Debugf("SESSIONHISTORY read took %s", elapsed)
 		}
 	}
 }
