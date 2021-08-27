@@ -3,19 +3,23 @@ package cmd
 import (
 	"bytes"
 	"context"
+	"embed"
 	"encoding/binary"
+	"io/fs"
 	"net"
 	"net/http"
 	"time"
 
 	"github.com/der-eismann/telemetry/pkg/util"
 	"github.com/getlantern/systray"
-	"github.com/gobuffalo/packr/v2"
 	"github.com/rebuy-de/rebuy-go-sdk/v3/pkg/cmdutil"
 	"github.com/sirupsen/logrus"
 	"github.com/skratchdot/open-golang/open"
 	"github.com/spf13/cobra"
 )
+
+//go:embed static
+var static embed.FS
 
 // Assignment of names to Packet IDs
 const (
@@ -111,8 +115,11 @@ func (app *App) Listen(ctx context.Context, cmd *cobra.Command, args []string) {
 		app.serveWs(hub, w, r)
 	})
 
-	box := packr.New("static", "../static")
-	http.Handle("/", http.FileServer(box))
+	subDir, err := fs.Sub(static, "static")
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	http.Handle("/", http.FileServer(http.FS(subDir)))
 
 	go http.ListenAndServe("127.0.0.1:8080", nil)
 	//open.Run("http://localhost:8080")

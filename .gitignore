@@ -2,7 +2,5 @@
 /dist
 *.exe
 telemetry
-/packrd
-/cmd/cmd-packr.go
 /psd-images
 /wip

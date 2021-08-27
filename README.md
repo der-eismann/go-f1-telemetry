@@ -18,10 +18,9 @@ example features:
 
 ## Build
 
-To build you need [Go](https://golang.org/) and
-[packr2](https://github.com/gobuffalo/packr/tree/master/v2) installed and on
+To build you need at least [Go](https://golang.org/) 1.16 installed and on
 Linux also the following packages for systray support (depends on your distro,
-these are for Fedora 32):
+these are for Fedora 34):
 
 - gtk3-devel
 - libappindicator-gtk3-devel
@@ -29,7 +28,6 @@ these are for Fedora 32):
 To build the project just execute
 
 ```sh
-$ packr2
 $ go build
 ```
 
