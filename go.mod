@@ -8,7 +8,7 @@ require (
 	github.com/rebuy-de/rebuy-go-sdk/v3 v3.8.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
-	github.com/spf13/cobra v1.2.1
+	github.com/spf13/cobra v1.3.0
 )
 
 require (
@@ -25,5 +25,5 @@ require (
 	github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	golang.org/x/sys v0.0.0-20210510120138-977fb7262007 // indirect
+	golang.org/x/sys v0.0.0-20211205182925-97ca703d548d // indirect
 )
