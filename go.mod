@@ -8,7 +8,7 @@ require (
 	github.com/rebuy-de/rebuy-go-sdk/v3 v3.8.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
-	github.com/spf13/cobra v1.3.0
+	github.com/spf13/cobra v1.5.0
 )
 
 require (
