@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/getlantern/systray v1.1.0
-	github.com/gorilla/websocket v1.4.2
+	github.com/gorilla/websocket v1.5.0
 	github.com/rebuy-de/rebuy-go-sdk/v3 v3.8.0
 	github.com/sirupsen/logrus v1.9.0
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
