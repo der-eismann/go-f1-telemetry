@@ -178,6 +178,8 @@ github.com/fsnotify/fsnotify v1.4.9/go.mod h1:znqG4EE+3YCdAaPaxE2ZRY/06pZUdp0tY4
 github.com/fsnotify/fsnotify v1.5.1/go.mod h1:T3375wBYaZdLLcVNkcVbzGHY7f1l/uK5T5Ai1i3InKU=
 github.com/gemnasium/logrus-graylog-hook/v3 v3.0.3-0.20200102145508-77cfe19be954 h1:oZCH9gEI8cRfKFr8jzcEa7ioozFDHX7IlR/RyFbSJEw=
 github.com/gemnasium/logrus-graylog-hook/v3 v3.0.3-0.20200102145508-77cfe19be954/go.mod h1:wi1zWv9tIvyLSMLCAzgRP+YR24oLVQVBHfPPKjtht44=
+github.com/gemnasium/logrus-graylog-hook/v3 v3.0.3 h1:YQHp/LxUTeZhgnXKbJASRii315h+HWtPd5ctewP4Pms=
+github.com/gemnasium/logrus-graylog-hook/v3 v3.0.3/go.mod h1:wi1zWv9tIvyLSMLCAzgRP+YR24oLVQVBHfPPKjtht44=
 github.com/getlantern/context v0.0.0-20190109183933-c447772a6520 h1:NRUJuo3v3WGC/g5YiyF790gut6oQr5f3FBI88Wv0dx4=
 github.com/getlantern/context v0.0.0-20190109183933-c447772a6520/go.mod h1:L+mq6/vvYHKjCX2oez0CgEAJmbq1fbb/oNJIWQkBybY=
 github.com/getlantern/errors v0.0.0-20190325191628-abdb3e3e36f7 h1:6uJ+sZ/e03gkbqZ0kUG6mfKoqDb4XMAzMIwlajq19So=
@@ -307,6 +309,8 @@ github.com/google/uuid v1.1.1/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+
 github.com/google/uuid v1.1.2/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/google/uuid v1.2.0 h1:qJYtXnJRWmpe7m/3XlyhrsLrEURqHRM2kxzoxXqyUDs=
 github.com/google/uuid v1.2.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+github.com/google/uuid v1.3.0 h1:t6JiXgmwXMjEs8VusXIJk2BXHsn+wx8BZdTaoZ5fu7I=
+github.com/google/uuid v1.3.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/googleapis/gax-go/v2 v2.0.4/go.mod h1:0Wqv26UfaUD9n4G6kQubkQ+KchISgw+vpHVxEJEs9eg=
 github.com/googleapis/gax-go/v2 v2.0.5/go.mod h1:DWXyrwAJ9X0FpwwEdw+IPEYBICEFu5mhpdKc/us6bOk=
 github.com/googleapis/gax-go/v2 v2.1.0/go.mod h1:Q3nei7sK6ybPYH7twZdmQpAd1MKb7pfu6SK+H1/DsU0=
@@ -526,6 +530,8 @@ github.com/prometheus/procfs v0.0.8/go.mod h1:7Qr8sr6344vo1JqZ6HhLceV9o3AJ1Ff+Gx
 github.com/prometheus/tsdb v0.7.1/go.mod h1:qhTCs0VvXwvX/y3TZrWD7rabWM+ijKTux40TwIPHuXU=
 github.com/rebuy-de/rebuy-go-sdk/v3 v3.8.0 h1:leTWgHktqmq3f+FVZo78AOspVlsbcI5yiWMByI6c69M=
 github.com/rebuy-de/rebuy-go-sdk/v3 v3.8.0/go.mod h1:Ai8ae+5IeTvpIdCo7/KprUVEq3ZW1P2yW4nn0X0Bdls=
+github.com/rebuy-de/rebuy-go-sdk/v3 v3.12.0 h1:jH/wAZiWcmo++2Rx+JK7VLPEVEwEPoJQ2oQE419h05o=
+github.com/rebuy-de/rebuy-go-sdk/v3 v3.12.0/go.mod h1:imLjgHMb9XZeZ2Cj6BEOdEuwkdUyOgDN4oBcSZthzro=
 github.com/rogpeppe/fastuuid v0.0.0-20150106093220-6724a57986af/go.mod h1:XWv6SoW27p1b0cqNHllgS5HIMJraePCO15w5zCzIWYg=
 github.com/rogpeppe/fastuuid v1.2.0/go.mod h1:jVj6XXZzXRy/MSR5jhDC/2q6DgLz+nrA6LYCDYWNEvQ=
 github.com/rogpeppe/go-internal v1.3.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
