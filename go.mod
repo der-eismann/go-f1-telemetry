@@ -1,6 +1,6 @@
 module github.com/der-eismann/telemetry
 
-go 1.18
+go 1.19
 
 require (
 	github.com/getlantern/systray v1.1.0
