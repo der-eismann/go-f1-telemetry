@@ -6,13 +6,14 @@ require (
 	github.com/getlantern/systray v1.1.0
 	github.com/gorilla/websocket v1.5.0
 	github.com/rebuy-de/rebuy-go-sdk/v3 v3.12.0
+	github.com/rebuy-de/rebuy-go-sdk/v4 v4.4.0
 	github.com/sirupsen/logrus v1.9.0
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
 	github.com/spf13/cobra v1.6.1
 )
 
 require (
-	github.com/gemnasium/logrus-graylog-hook/v3 v3.0.3 // indirect
+	github.com/gemnasium/logrus-graylog-hook/v3 v3.1.0 // indirect
 	github.com/getlantern/context v0.0.0-20190109183933-c447772a6520 // indirect
 	github.com/getlantern/errors v0.0.0-20190325191628-abdb3e3e36f7 // indirect
 	github.com/getlantern/golog v0.0.0-20190830074920-4ef2e798c2d7 // indirect
@@ -25,5 +26,5 @@ require (
 	github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8 // indirect
+	golang.org/x/sys v0.4.0 // indirect
 )
